@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космічні події - Інтерактивна візуалізація</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">🌌 CosmicViz</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active" data-screen="home">Головна</a>
+                <a href="#" class="nav-link" data-screen="events">Події</a>
+                <a href="#" class="nav-link" data-screen="visualization">Візуалізація</a>
+                <a href="#" class="nav-link" data-screen="data">Дані NASA</a>
+                <a href="#" class="nav-link" data-screen="about">Про проєкт</a>
+                <button id="openRegisterModal" class="control-btn" style="margin-left:18px;font-size:1em;">👤 Реєстрація</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Screen -->
+    <div id="home" class="screen active">
+        <div class="hero">
+            <h1>Досліджуйте Всесвіт</h1>
+            <p>Інтерактивна візуалізація космічних подій на основі даних NASA</p>
+            <button class="cta-button" onclick="showScreen('events')">Почати дослідження</button>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <span class="feature-icon">🌟</span>
+                <h3>Дані NASA</h3>
+                <p>Використовуємо точні наукові дані для реалістичного моделювання космічних явищ</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🎮</span>
+                <h3>Інтерактивність</h3>
+                <p>Змінюйте параметри, масштаб та кут огляду для повного розуміння подій</p>
+            </div>
+            <div class="feature-card">
+                <span class="feature-icon">🔬</span>
+                <h3>Освіта</h3>
+                <p>Ідеальний інструмент для вивчення астрофізики та космології</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Selection Screen -->
+    <div id="events" class="screen">
+        <div class="hero">
+            <h1>Оберіть космічну подію</h1>
+            <p>Досліджуйте найзахоплюючі явища у Всесвіті</p>
+        </div>
+
+        <div class="events-grid">
+            <div class="event-card" onclick="selectEvent('supernova')">
+                <div class="event-image">💥</div>
+                <div class="event-content">
+                    <h3 class="event-title">Вибух наднової</h3>
+                    <p class="event-description">Спостерігайте за фінальною стадією життя масивної зірки та народженням нейтронної зірки або чорної діри</p>
+                </div>
+            </div>
+
+            <div class="event-card" onclick="selectEvent('blackhole')">
+                <div class="event-image">🕳️</div>
+                <div class="event-content">
+                    <h3 class="event-title">Чорна діра</h3>
+                    <p class="event-description">Вивчайте гравітаційні ефекти та поглинання матерії найзагадковішими об'єктами Всесвіту</p>
+                </div>
+            </div>
+
+            <div class="event-card" onclick="selectEvent('neutron')">
+                <div class="event-image">⚡</div>
+                <div class="event-content">
+                    <h3 class="event-title">Нейтронна зірка</h3>
+                    <p class="event-description">Досліджуйте найщільніші об'єкти у Всесвіті з неймовірними магнітними полями</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualization Screen -->
+    <div id="visualization" class="screen">
+        <div class="viz-container">
+            <div class="viz-sidebar">
+                <h3 style="margin-bottom: 20px; color: #64b5f6;">Параметри симуляції</h3>
+                
+                <div class="control-group">
+                    <label>Масштаб часу</label>
+                    <input type="range" class="slider" id="timeScale" min="0.1" max="5" value="1" step="0.1">
+                    <div class="value-display" id="timeScaleValue">1.0x</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Маса об'єкта</label>
+                    <input type="range" class="slider" id="mass" min="1" max="100" value="50">
+                    <div class="value-display" id="massValue">50 M☉</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Відстань спостереження</label>
+                    <input type="range" class="slider" id="distance" min="1" max="1000" value="100">
+                    <div class="value-display" id="distanceValue">100 св. років</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Інтенсивність випромінювання</label>
+                    <input type="range" class="slider" id="intensity" min="10" max="100" value="50">
+                    <div class="value-display" id="intensityValue">50%</div>
+                </div>
+
+                <div class="control-group">
+                    <label>Гучність музики</label>
+                    <input type="range" class="slider" id="musicVolume" min="0" max="1" value="0.3" step="0.1">
+                    <div class="value-display" id="musicVolumeValue">30%</div>
+                </div>
+
+                <div class="control-group">
+                    <button class="control-btn" onclick="toggleMusic()">🔊 Увімкн./Вимкн. музику</button>
+                </div>
+
+                <div class="control-group">
+                    <label>Завантажити власні звуки</label>
+                    <input type="file" id="soundUpload" accept="audio/*" multiple style="color: white; margin-bottom: 10px;">
+                    <button class="control-btn" onclick="loadUserSounds()" style="width: 100%;">📁 Завантажити звуки</button>
+                </div>
+
+                <div class="control-group">
+                    <label>Тестові звуки</label>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                        <button class="control-btn" onclick="playSound('buttonClick')" style="font-size: 12px; padding: 5px;">Click</button>
+                        <button class="control-btn" onclick="playSound('supernova')" style="font-size: 12px; padding: 5px;">💥</button>
+                        <button class="control-btn" onclick="playSound('blackhole')" style="font-size: 12px; padding: 5px;">🕳️</button>
+                        <button class="control-btn" onclick="playSound('neutron')" style="font-size: 12px; padding: 5px;">⚡</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-main">
+                <div class="simulation-area" style="background: radial-gradient(ellipse at 60% 40%, #232b4d 60%, #0d133b 100%); box-shadow: 0 8px 40px #0008; border-radius: 18px; min-height: 340px; position: relative; overflow: hidden;">
+                    <div class="cosmic-object supernova" id="cosmicObject"></div>
+                    <!-- Комети: контейнер для анімації -->
+                    <div id="cometContainer" style="pointer-events:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:10;"></div>
+                    <!-- Додаємо зорі та туманності -->
+                    <canvas id="starfield" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;"></canvas>
+                    <div id="nebula" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none;"></div>
+                </div>
+                <script>
+                // WOW-ефект: зоряне поле та туманність
+                (function() {
+                    const canvas = document.getElementById('starfield');
+                    if (!canvas) return;
+                    function resize() {
+                        canvas.width = canvas.offsetWidth;
+                        canvas.height = canvas.offsetHeight;
+                    }
+                    window.addEventListener('resize', resize);
+                    resize();
+                    const ctx = canvas.getContext('2d');
+                    function drawStars() {
+                        ctx.clearRect(0,0,canvas.width,canvas.height);
+                        for (let i=0; i<90; i++) {
+                            const x = Math.random()*canvas.width;
+                            const y = Math.random()*canvas.height;
+                            const r = Math.random()*1.2+0.3;
+                            ctx.beginPath();
+                            ctx.arc(x, y, r, 0, 2*Math.PI);
+                            ctx.fillStyle = `rgba(255,255,${200+Math.random()*55},${0.5+Math.random()*0.5})`;
+                            ctx.shadowColor = '#fff';
+                            ctx.shadowBlur = 6;
+                            ctx.fill();
+                        }
+                    }
+                    setInterval(drawStars, 1800);
+                    drawStars();
+                })();
+                // WOW-ефект: туманність
+                (function() {
+                    const nebula = document.getElementById('nebula');
+                    if (!nebula) return;
+                    nebula.innerHTML = '';
+                    for (let i=0; i<3; i++) {
+                        const n = document.createElement('div');
+                        n.className = 'nebula-cloud';
+                        n.style.left = (20+Math.random()*60)+'%';
+                        n.style.top = (20+Math.random()*60)+'%';
+                        n.style.width = (120+Math.random()*120)+'px';
+                        n.style.height = (60+Math.random()*80)+'px';
+                        n.style.opacity = 0.13+Math.random()*0.12;
+                        nebula.appendChild(n);
+                    }
+                })();
+                </script>
+
+                <div class="play-controls">
+                    <button class="control-btn" onclick="playSimulation()">▶️ Відтворити</button>
+                    <button class="control-btn" onclick="pauseSimulation()">⏸️ Пауза</button>
+                    <button class="control-btn" onclick="resetSimulation()">🔄 Скинути</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Screen -->
+    <div id="data" class="screen">
+        <div class="data-dashboard">
+            <h1 style="display:flex;align-items:center;gap:10px;font-size:2.2rem;">🛰️ Дані NASA <span style="font-size:1.3rem;">(оновлено 2024)</span></h1>
+            <p style="font-size:1.1rem;color:#90caf9;margin-bottom:18px;">Актуальна інформація про космічні об'єкти та явища з відкритих джерел NASA та ESA. <span style="background:#222b;color:#ffd600;padding:2px 8px;border-radius:8px;font-size:0.95em;">Дані оновлюються щомісяця!</span></p>
+
+            <!-- Контролі для сортування/фільтрації графіка -->
+            <div id="nasaChartControls" style="display:flex;justify-content:flex-end;gap:12px;margin:18px 0 0 0;"></div>
+
+            <div class="data-grid">
+                <div class="data-card wow-card" style="background:linear-gradient(120deg,#1976d2 60%,#64b5f6 100%);color:#fff;">
+                    <h3 class="data-title" style="display:flex;align-items:center;gap:6px;">💥 Активні наднові</h3>
+                    <div class="data-value animated-counter" data-value="247">0</div>
+                    <p class="data-description">Кількість зареєстрованих наднових у 2024 році <span style="font-size:1.2em;">✨</span></p>
+                </div>
+
+                <div class="data-card wow-card" style="background:linear-gradient(120deg,#0d133b 60%,#43a047 100%);color:#fff;">
+                    <h3 class="data-title" style="display:flex;align-items:center;gap:6px;">🕳️ Відомі чорні діри</h3>
+                    <div class="data-value animated-counter" data-value="63">0</div>
+                    <p class="data-description">Підтверджені чорні діри зоряної маси <span style="font-size:1.2em;">🛰️</span></p>
+                </div>
+
+                <div class="data-card wow-card" style="background:linear-gradient(120deg,#1e293b 60%,#ffd600 100%);color:#222;">
+                    <h3 class="data-title" style="display:flex;align-items:center;gap:6px;">⚡ Нейтронні зірки</h3>
+                    <div class="data-value animated-counter" data-value="3200">0</div>
+                    <p class="data-description">Каталогізовані пульсари та магнетари <span style="font-size:1.2em;">🪐</span></p>
+                </div>
+
+                <div class="data-card wow-card" style="background:linear-gradient(120deg,#222b 60%,#64b5f6 100%);color:#fff;">
+                    <h3 class="data-title" style="display:flex;align-items:center;gap:6px;">⏰ Оновлення даних</h3>
+                    <div class="data-value">12:34</div>
+                    <p class="data-description">Останнє синхронізування з базою NASA <span style="font-size:1.2em;">🔄</span></p>
+                </div>
+            </div>
+
+            <!-- Динамічний графік для NASA Data (Chart.js) -->
+            <canvas id="nasaDataChart" style="max-width: 100%; margin: 32px auto 0 auto; background:rgba(25,118,210,0.08); border-radius:18px; box-shadow:0 4px 24px #0002; display:block;"></canvas>
+
+            <div style="margin-top:24px;">
+                <div style="background:rgba(25,118,210,0.12);border-radius:12px;padding:1rem 1.5rem;margin-bottom:10px;">
+                    <strong>🔗 Джерела:</strong> <a href="https://www.nasa.gov/" target="_blank" style="color:#ffd600;">nasa.gov</a>, <a href="https://heasarc.gsfc.nasa.gov/wgacat/" target="_blank" style="color:#ffd600;">WGACAT</a>, <a href="https://www.esa.int/" target="_blank" style="color:#ffd600;">esa.int</a>
+                </div>
+                <div style="background:rgba(67,160,71,0.10);border-radius:12px;padding:1rem 1.5rem;">
+                    <strong>💡 Цікаво:</strong> Наймасивніша відома чорна діра важить понад 66 мільярдів мас Сонця! <span style="font-size:1.3em;">🤯</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Screen -->
+    <div id="about" class="screen">
+        <div class="about-content" style="max-width:700px;margin:auto;">
+            <h2 style="display:flex;align-items:center;gap:10px;font-size:2rem;">🚀 Про проєкт</h2>
+            <p style="font-size:1.1rem;color:#90caf9;">"Інтерактивна візуалізація космічних подій" — освітня платформа для дослідження Всесвіту через симуляції, гейміфікацію та WOW-ефекти.</p>
+
+            <div style="margin:18px 0 0 0;">
+                <div style="background:linear-gradient(90deg,#1976d2 60%,#64b5f6 100%);color:#fff;border-radius:12px;padding:1rem 1.5rem;margin-bottom:10px;">
+                    <strong>🌟 Мета:</strong> Зробити астрофізику цікавою, доступною та інтерактивною для всіх!
+                </div>
+                <div style="background:linear-gradient(90deg,#ffd600 60%,#fffde7 100%);color:#222;border-radius:12px;padding:1rem 1.5rem;margin-bottom:10px;">
+                    <strong>🛠️ Технології:</strong> Дані NASA, сучасний JavaScript, CSS3, WOW-анімації, drag&drop, адаптивний дизайн.
+                </div>
+                <div style="background:linear-gradient(90deg,#43a047 60%,#b9f6ca 100%);color:#222;border-radius:12px;padding:1rem 1.5rem;margin-bottom:10px;">
+                    <strong>🎓 Освітня цінність:</strong> Пояснюємо складне просто, мотивуємо досліджувати, надихаємо на відкриття.
+                </div>
+            </div>
+
+            <div style="margin:18px 0 0 0;">
+                <strong>📅 Таймлайн розвитку:</strong>
+                <ul style="margin:10px 0 0 20px;color:#64b5f6;">
+                    <li>2023 — ідея та перший прототип</li>
+                    <li>2024 — гейміфікація, WOW-ефекти, мобільна адаптація</li>
+                    <li>2025 — інтеграція з NASA API, VR/AI-плани</li>
+                </ul>
+            </div>
+
+            <div style="margin:18px 0 0 0;">
+                <strong>📬 Контакти:</strong> <a href="mailto:cosmicviz@space.com" style="color:#ffd600;">cosmicviz@space.com</a>
+            </div>
+
+            <div style="margin:18px 0 0 0;">
+                <strong>💡 Факт:</strong> <span style="color:#ffd600;">Кожна секунда у Всесвіті вибухає понад 30 зірок!</span> <span style="font-size:1.3em;">🌠</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Гейміфікація: панель прогресу, бейджі, місії, карта -->
+    <div id="gamificationPanel" style="position:fixed;top:80px;right:20px;z-index:2000;width:320px;max-width:90vw;touch-action:none;">
+        <div id="gamificationPanelInner" style="background:rgba(13,20,69,0.95);border-radius:15px;padding:1rem 1.5rem 1.5rem 1.5rem;box-shadow:0 4px 20px #0003;border:1px solid #64b5f6;cursor:grab;touch-action:none;position:relative;">
+            <button id="gamificationPanelToggle" aria-label="Згорнути/розгорнути панель" style="position:absolute;top:8px;right:8px;background:none;border:none;color:#64b5f6;font-size:1.3em;cursor:pointer;z-index:10;transition:color 0.2s;">➖</button>
+            <div id="gamificationPanelContent">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                    <span style="font-size:1.5rem;">🏆</span>
+                    <span id="gamificationLevelLabel" style="font-weight:bold;color:#64b5f6;">Новачок (0 / 100)</span>
+                </div>
+                <progress id="gamificationProgressBar" value="0" max="100" style="width:100%;height:18px;"></progress>
+                <div style="margin:10px 0 0 0;">
+                    <strong>Бейджі:</strong>
+                    <div id="gamificationBadges" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;"></div>
+                </div>
+                <div style="margin:10px 0 0 0;">
+                    <strong>Місії:</strong>
+                    <div id="gamificationMissions" style="margin-top:4px;"></div>
+                </div>
+                <div style="margin:10px 0 0 0;">
+                    <strong>Карта місій:</strong>
+                    <div id="gamificationMap" style="display:flex;gap:8px;margin-top:4px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    // Drag & drop + minimize for gamification panel (desktop + mobile)
+    (function() {
+        const panel = document.getElementById('gamificationPanel');
+        const inner = document.getElementById('gamificationPanelInner');
+        const toggle = document.getElementById('gamificationPanelToggle');
+        const content = document.getElementById('gamificationPanelContent');
+        let dragging = false;
+        let startX, startY, origX, origY;
+        function onPointerDown(e) {
+            if (e.target === toggle) return;
+            dragging = true;
+            panel.style.transition = 'none';
+            startX = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+            startY = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
+            const rect = panel.getBoundingClientRect();
+            origX = rect.left;
+            origY = rect.top;
+            document.addEventListener('pointermove', onPointerMove);
+            document.addEventListener('pointerup', onPointerUp);
+        }
+        function onPointerMove(e) {
+            if (!dragging) return;
+            let x = e.type.startsWith('touch') ? e.touches[0].clientX : e.clientX;
+            let y = e.type.startsWith('touch') ? e.touches[0].clientY : e.clientY;
+            let dx = x - startX;
+            let dy = y - startY;
+            let newLeft = origX + dx;
+            let newTop = origY + dy;
+            // Clamp to viewport
+            newLeft = Math.max(0, Math.min(window.innerWidth - panel.offsetWidth, newLeft));
+            newTop = Math.max(0, Math.min(window.innerHeight - panel.offsetHeight, newTop));
+            panel.style.left = newLeft + 'px';
+            panel.style.top = newTop + 'px';
+            panel.style.right = 'auto';
+        }
+        function onPointerUp() {
+            dragging = false;
+            document.removeEventListener('pointermove', onPointerMove);
+            document.removeEventListener('pointerup', onPointerUp);
+        }
+        inner.addEventListener('pointerdown', onPointerDown);
+        // Touch fallback for iOS
+        inner.addEventListener('touchstart', onPointerDown);
+        // Minimize/maximize
+        let minimized = false;
+        toggle.addEventListener('click', function() {
+            minimized = !minimized;
+            if (minimized) {
+                content.style.display = 'none';
+                toggle.innerText = '➕';
+                inner.style.height = '40px';
+                inner.style.minHeight = '40px';
+                inner.style.padding = '0.3rem 1.5rem 0.3rem 2.5rem';
+            } else {
+                content.style.display = '';
+                toggle.innerText = '➖';
+                inner.style.height = '';
+                inner.style.minHeight = '';
+                inner.style.padding = '';
+            }
+        });
+    })();
+    </script>
+
+    <!-- Гейміфікаційні сповіщення -->
+    <style>
+        .gamification-notification {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            background: linear-gradient(90deg,#1976d2,#64b5f6);
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 8px 32px #0005;
+            opacity: 0;
+            z-index: 3000;
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        .gamification-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        #gamificationBadges .badge {
+            background: #222b;
+            color: #90caf9;
+            border-radius: 8px;
+            padding: 2px 10px;
+            font-size: 0.95em;
+            margin: 2px 0;
+            border: 1px solid #64b5f6;
+            opacity: 0.5;
+            transition: opacity 0.3s, background 0.3s;
+        }
+        #gamificationBadges .badge.earned {
+            background: #64b5f6;
+            color: #fff;
+            opacity: 1;
+        }
+        #gamificationMissions .mission {
+            background: #222b;
+            border-radius: 8px;
+            padding: 2px 10px;
+            font-size: 0.95em;
+            margin: 2px 0;
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #64b5f6;
+            opacity: 0.7;
+        }
+        #gamificationMissions .mission.done {
+            background: #43a047;
+            color: #fff;
+            opacity: 1;
+        }
+        #gamificationMap .map-marker {
+            width: 18px; height: 18px; border-radius: 50%; background: #222b; border:2px solid #64b5f6; display:inline-block; opacity:0.5;
+        }
+        #gamificationMap .map-marker.done {
+            background: #ffd600; border-color: #43a047; opacity:1;
+        }
+    </style>
+    <script src="scripts/chartjs-loader.js"></script>
+    <script src="scripts/nasa-chart.js"></script>
+    <script src="scripts/gamification.js"></script>
+    <script src="scripts/main.js"></script>
+    <script>
+    // WOW-ефект: анімовані лічильники для data-value
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.animated-counter').forEach(function(el) {
+            let target = +el.getAttribute('data-value');
+            let val = 0;
+            let step = Math.max(1, Math.floor(target/60));
+            let interval = setInterval(function() {
+                val += step;
+                if (val >= target) { val = target; clearInterval(interval); }
+                el.textContent = val.toLocaleString();
+            }, 18);
+        });
+    });
+
+    // Анімація комет у візуалізації космічних подій
+    (function() {
+        const area = document.querySelector('.simulation-area');
+        const cometContainer = document.getElementById('cometContainer');
+        if (!area || !cometContainer) return;
+        function randomBetween(a, b) { return a + Math.random() * (b - a); }
+        function launchComet() {
+            const comet = document.createElement('div');
+            comet.className = 'comet';
+            // Випадкова траєкторія: зверху/зліва/справа
+            const startY = randomBetween(10, area.offsetHeight - 60);
+            const startX = Math.random() < 0.5 ? -80 : area.offsetWidth + 80;
+            const endX = startX < 0 ? area.offsetWidth + 80 : -80;
+            const endY = startY + randomBetween(-60, 60);
+            comet.style.top = startY + 'px';
+            comet.style.left = startX + 'px';
+            comet.style.opacity = 0.85;
+            comet.style.cursor = 'pointer';
+            comet.title = 'Натисни, щоб зловити комету!';
+            comet.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (comet.classList.contains('caught')) return;
+                comet.classList.add('caught');
+                if (window.Gamification) {
+                    Gamification.addEvent('comet');
+                }
+                // Анімація "зникнення"
+                comet.style.transition = 'opacity 0.3s, transform 0.3s';
+                comet.style.opacity = '0';
+                comet.style.transform = 'scale(1.3)';
+                setTimeout(()=>comet.remove(), 350);
+            });
+            cometContainer.appendChild(comet);
+            // Анімація
+            comet.animate([
+                { transform: `translate(0,0)`, opacity: 0.85 },
+                { transform: `translate(${endX - startX}px,${endY - startY}px)`, opacity: 0.1 }
+            ], {
+                duration: randomBetween(1800, 3200),
+                easing: 'cubic-bezier(.7,.1,.9,1)',
+                fill: 'forwards'
+            });
+            setTimeout(() => comet.remove(), 3200);
+        }
+        // Запускати комету випадково кожні 10-25 секунд, тільки якщо видно visualization
+        function maybeLaunchComet() {
+            if (document.getElementById('visualization').classList.contains('active')) {
+                launchComet();
+            }
+            setTimeout(maybeLaunchComet, randomBetween(10000, 25000));
+        }
+        maybeLaunchComet();
+    })();
+
+    <!-- Модальне вікно реєстрації -->
+    <div id="registerModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(13,20,69,0.85);z-index:4000;align-items:center;justify-content:center;">
+      <form id="registerForm" style="background:#232b4d;padding:2.2rem 2.5rem 2rem 2.5rem;border-radius:18px;box-shadow:0 8px 40px #0008;max-width:340px;width:90vw;display:flex;flex-direction:column;gap:18px;align-items:center;">
+        <h2 style="color:#ffd600;margin-bottom:8px;">Реєстрація</h2>
+        <input id="regNick" type="text" placeholder="Нікнейм" required minlength="3" maxlength="18" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid #64b5f6;font-size:1.1em;">
+        <input id="regPass" type="password" placeholder="Пароль" required minlength="4" maxlength="32" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid #64b5f6;font-size:1.1em;">
+        <button type="submit" class="control-btn" style="width:100%;font-size:1.1em;background:#64b5f6;color:#fff;">Зареєструватися</button>
+        <button type="button" id="closeRegisterModal" class="control-btn" style="width:100%;background:none;color:#ffd600;font-size:1em;">Скасувати</button>
+        <div id="registerMsg" style="color:#ffd600;font-size:1em;text-align:center;"></div>
+      </form>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const openBtn = document.getElementById('openRegisterModal');
+      const closeBtn = document.getElementById('closeRegisterModal');
+      const modal = document.getElementById('registerModal');
+      const msg = document.getElementById('registerMsg');
+      if (openBtn && modal) {
+        openBtn.onclick = function() {
+          modal.style.display = 'flex';
+        };
+      }
+      if (closeBtn && modal && msg) {
+        closeBtn.onclick = function() {
+          modal.style.display = 'none';
+          msg.textContent = '';
+        };
+      }
+      const form = document.getElementById('registerForm');
+      if (form) {
+        form.onsubmit = function(e) {
+          e.preventDefault();
+          const nick = document.getElementById('regNick').value.trim();
+          const pass = document.getElementById('regPass').value;
+          if (nick.length < 3 || pass.length < 4) {
+            msg.textContent = 'Введіть коректні дані!';
+            return;
+          }
+          localStorage.setItem('cosmicUser', JSON.stringify({nick, pass}));
+          msg.textContent = 'Реєстрація успішна!';
+          setTimeout(()=>{
+            modal.style.display = 'none';
+            msg.textContent = '';
+          }, 1200);
+        };
+      }
+    });
+    </script>
+</body>
+</html>
